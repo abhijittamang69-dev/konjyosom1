@@ -1,3 +1,5 @@
+// Konjyosom Tech Solutions - Backend API
+// Deploy trigger note: Render auto-deploy watches backend changes.
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');

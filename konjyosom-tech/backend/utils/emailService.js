@@ -1,19 +1,8 @@
-const resend = require('../config/resend');
-
-const sendEmail = async ({ to, subject, html, text }) => {
-  try {
-    const data = await resend.emails.send({
-      from: `${process.env.RESEND_FROM_NAME || 'Konjyosom Tech'} <${process.env.RESEND_FROM_EMAIL || 'noreply@konjyosomtech.com'}>`,
-      to: to,
-      subject: subject,
-      html: html,
-      text: text
-    });
-    return { success: true, data };
-  } catch (error) {
-    console.error('Email sending error:', error);
-    return { success: false, error: error.message };
-  }
+// Email service disabled — Resend integration removed.
+// sendEmail is kept as a safe no-op so existing controller calls do not break.
+const sendEmail = async ({ to, subject, html, text } = {}) => {
+  console.log(`Email skipped (service disabled): "${subject}"${to ? ` -> ${to}` : ''}`);
+  return { success: false, error: 'Email service disabled' };
 };
 
 const emailTemplates = {

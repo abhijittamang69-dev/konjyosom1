@@ -80,7 +80,6 @@ app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/website', require('./routes/websiteRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
-app.use('/api/upload', require('./routes/uploadRoutes'));
 
 // Health Check
 app.get('/api/health', (req, res) => {

@@ -1,7 +1,9 @@
 # Backend Deployment Guide - Konjyosom Tech Solutions
 
 ## Overview
-This guide covers deploying the Node.js backend to **Render.com** with **MongoDB Atlas** and **Cloudinary**.
+This guide covers deploying the Node.js backend to **Render.com** with **MongoDB Atlas**.
+
+> **Note:** Email (Resend) and image upload (Cloudinary) integrations have been removed from this project. The app runs without them: emails are skipped (logged only) and there is no `/api/upload` endpoint.
 
 ---
 
@@ -12,8 +14,6 @@ This guide covers deploying the Node.js backend to **Render.com** with **MongoDB
 | Node.js 18+ | Runtime | [nodejs.org](https://nodejs.org) |
 | Git | Version control | [git-scm.com](https://git-scm.com) |
 | MongoDB Atlas | Database | [mongodb.com/atlas](https://mongodb.com/atlas) |
-| Cloudinary | Image storage | [cloudinary.com](https://cloudinary.com) |
-| Resend | Email service | [resend.com](https://resend.com) |
 | Render account | Hosting | [render.com](https://render.com) |
 
 ---
@@ -110,45 +110,7 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 
 ---
 
-## Step 3: Setup Cloudinary
-
-### 3.1 Create Account
-
-1. Go to [cloudinary.com](https://cloudinary.com)
-2. Sign up with email or Google/GitHub
-3. Verify email
-
-### 3.2 Get Credentials
-
-1. In Cloudinary dashboard, find **Account Details**:
-   - **Cloud Name**: `your-cloud-name`
-   - **API Key**: `123456789012345`
-   - **API Secret**: `your-secret-key`
-
-2. Save these for later
-
----
-
-## Step 4: Setup Resend (Email)
-
-### 4.1 Create Account
-
-1. Go to [resend.com](https://resend.com)
-2. Sign up
-3. Verify domain (add DNS records as instructed)
-   - Or use default: `onboarding@resend.dev` for testing
-
-### 4.2 Get API Key
-
-1. Go to **API Keys** in Resend dashboard
-2. Click **Create API Key**
-3. Name: `Konjyosom Production`
-4. Permissions: **Sending access**
-5. Copy the key: `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
-
----
-
-## Step 5: Deploy to Render
+## Step 3: Deploy to Render
 
 ### Option A: Blueprint (Recommended - Auto)
 
@@ -164,7 +126,7 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 
 ### Option B: Manual Setup
 
-#### 5.1 Create Web Service (Backend)
+#### 3.1 Create Web Service (Backend)
 
 1. Go to [dashboard.render.com](https://dashboard.render.com)
 2. Click **New** → **Web Service**
@@ -191,12 +153,6 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 | `MONGODB_URI` | Your Atlas connection string |
 | `JWT_SECRET` | Generate: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
 | `JWT_EXPIRE` | `7d` |
-| `RESEND_API_KEY` | Your Resend key |
-| `RESEND_FROM_EMAIL` | `noreply@konjyosomtech.com` |
-| `RESEND_FROM_NAME` | `Konjyosom Tech Solutions` |
-| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
-| `CLOUDINARY_API_KEY` | Your Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Your Cloudinary API secret |
 | `FRONTEND_URL` | Your frontend URL (set after frontend deploy) |
 | `ADMIN_EMAIL` | `admin@konjyosomtech.com` |
 | `ADMIN_PASSWORD` | Strong password (change after first login!) |
@@ -204,7 +160,7 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 6. Click **Create Web Service**
 7. Wait for build & deploy (2-3 minutes)
 
-#### 5.2 Create Static Site (Frontend)
+#### 3.2 Create Static Site (Frontend)
 
 1. Click **New** → **Static Site**
 2. Connect same GitHub repo
@@ -222,7 +178,7 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 4. Click **Create Static Site**
 5. Copy the URL (e.g., `https://konjyosom-frontend.onrender.com`)
 
-#### 5.3 Link Frontend & Backend
+#### 3.3 Link Frontend & Backend
 
 1. Go back to **Web Service** → **Environment**
 2. Add/update: `FRONTEND_URL` = your static site URL
@@ -230,9 +186,9 @@ mongodb+srv://konjyosom_admin:<password>@cluster0.xxxxx.mongodb.net/konjyosomtec
 
 ---
 
-## Step 6: Verify Deployment
+## Step 4: Verify Deployment
 
-### 6.1 Health Check
+### 4.1 Health Check
 
 ```bash
 curl https://konjyosom-api.onrender.com/api/health
@@ -248,13 +204,15 @@ Expected response:
 }
 ```
 
-### 6.2 Test Admin Login
+### 4.2 Test Admin Login
 
 ```bash
-curl -X POST https://konjyosom-api.onrender.com/api/auth/login   -H "Content-Type: application/json"   -d '{"email":"admin@konjyosomtech.com","password":"<admin-password>"}'
+curl -X POST https://konjyosom-api.onrender.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@konjyosomtech.com","password":"<your-admin-password>"}'
 ```
 
-### 6.3 Test Public Endpoints
+### 4.3 Test Public Endpoints
 
 ```bash
 # Get website settings
@@ -269,15 +227,15 @@ curl https://konjyosom-api.onrender.com/api/website/services
 
 ---
 
-## Step 7: Post-Deployment Tasks
+## Step 5: Post-Deployment Tasks
 
-### 7.1 Change Admin Password
+### 5.1 Change Admin Password
 
 1. Login at `https://your-frontend.onrender.com/login.html`
 2. Use default credentials
 3. Go to **Profile** → Change password immediately
 
-### 7.2 Configure Website Content
+### 5.2 Configure Website Content
 
 1. Login as admin
 2. Go to **Website CMS**
@@ -289,14 +247,14 @@ curl https://konjyosom-api.onrender.com/api/website/services
    - Hero typing texts
    - SEO meta tags
 
-### 7.3 Add First Technician
+### 5.3 Add First Technician
 
 1. Go to **Technicians** → **Add New**
 2. Fill name, email, phone, specializations
 3. System auto-generates temp password
-4. Email sent to technician with login details
+4. Share the temp password with the technician manually (outgoing email is disabled)
 
-### 7.4 Update Frontend API URL
+### 5.4 Update Frontend API URL
 
 In `frontend/js/main.js`, update:
 
@@ -308,16 +266,16 @@ const API_BASE_URL = 'https://konjyosom-api.onrender.com/api';
 
 ---
 
-## Step 8: Custom Domain (Optional)
+## Step 6: Custom Domain (Optional)
 
-### 8.1 Buy Domain
+### 6.1 Buy Domain
 
 Recommended registrars for Nepal:
 - [Namecheap](https://namecheap.com)
 - [GoDaddy](https://godaddy.com)
 - [Hostinger](https://hostinger.com)
 
-### 8.2 Connect to Render
+### 6.2 Connect to Render
 
 **For Backend (API):**
 1. Render Dashboard → Web Service → **Settings** → **Custom Domains**
@@ -331,11 +289,10 @@ Recommended registrars for Nepal:
 3. Copy DNS records
 4. Add to registrar
 
-### 8.3 Update Environment Variables
+### 6.3 Update Environment Variables
 
 After custom domain setup, update:
 - `FRONTEND_URL` → `https://konjyosomtech.com`
-- Resend sender email → `noreply@konjyosomtech.com` (verify domain in Resend)
 
 ---
 
@@ -356,22 +313,6 @@ node -e "require('mongoose').connect(process.env.MONGODB_URI).then(()=>console.l
 ```bash
 # Check FRONTEND_URL env var matches actual frontend domain
 # Update in Render dashboard → Web Service → Environment
-```
-
-### Issue: "Images not uploading"
-
-```bash
-# Check Cloudinary credentials in env vars
-# Verify Cloudinary dashboard shows uploads
-# Check Render logs: Dashboard → Web Service → Logs
-```
-
-### Issue: "Emails not sending"
-
-```bash
-# Verify Resend API key
-# Check Resend dashboard for delivery status
-# For production: verify domain in Resend (not just onboarding@resend.dev)
 ```
 
 ### Issue: "Build failed"
@@ -395,12 +336,6 @@ npm install
 | `MONGODB_URI` | Yes | `mongodb+srv://...` | MongoDB Atlas |
 | `JWT_SECRET` | Yes | `64-char hex` | Generate yourself |
 | `JWT_EXPIRE` | No | `7d` | Default: 7d |
-| `RESEND_API_KEY` | Yes | `re_...` | Resend dashboard |
-| `RESEND_FROM_EMAIL` | Yes | `noreply@...` | Your domain |
-| `RESEND_FROM_NAME` | No | `Konjyosom Tech` | Your company |
-| `CLOUDINARY_CLOUD_NAME` | Yes | `your-cloud` | Cloudinary dashboard |
-| `CLOUDINARY_API_KEY` | Yes | `1234567890` | Cloudinary dashboard |
-| `CLOUDINARY_API_SECRET` | Yes | `secret...` | Cloudinary dashboard |
 | `FRONTEND_URL` | Yes | `https://...` | Your frontend URL |
 | `ADMIN_EMAIL` | Yes | `admin@...` | Your choice |
 | `ADMIN_PASSWORD` | Yes | `StrongPass123!` | Your choice |
@@ -440,7 +375,6 @@ mongodump --uri="your-connection-string" --out=backup-$(date +%Y%m%d)
 
 - Render Dashboard → Metrics (CPU, memory, requests)
 - MongoDB Atlas → Monitoring (queries, connections)
-- Cloudinary → Reports (storage, bandwidth)
 
 ---
 
@@ -449,8 +383,6 @@ mongodump --uri="your-connection-string" --out=backup-$(date +%Y%m%d)
 - [ ] Change default admin password
 - [ ] Use strong JWT_SECRET (64+ random chars)
 - [ ] Enable MongoDB IP whitelist (restrict to Render IPs)
-- [ ] Verify Resend domain (not just onboarding email)
-- [ ] Set up Cloudinary upload presets (restrict file types)
 - [ ] Enable HTTPS (Render auto-enables)
 - [ ] Add rate limiting (already in code)
 - [ ] Review activity logs regularly
@@ -463,8 +395,6 @@ mongodump --uri="your-connection-string" --out=backup-$(date +%Y%m%d)
 |---------|--------------|---------|
 | Render | [docs.render.com](https://docs.render.com) | [render.com/docs](https://render.com/docs) |
 | MongoDB Atlas | [docs.mongodb.com](https://docs.mongodb.com) | [support.mongodb.com](https://support.mongodb.com) |
-| Cloudinary | [cloudinary.com/documentation](https://cloudinary.com/documentation) | [support.cloudinary.com](https://support.cloudinary.com) |
-| Resend | [resend.com/docs](https://resend.com/docs) | [resend.com/support](https://resend.com/support) |
 | Node.js | [nodejs.org/docs](https://nodejs.org/docs) | [github.com/nodejs/help](https://github.com/nodejs/help) |
 
 ---

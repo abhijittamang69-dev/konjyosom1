@@ -3,7 +3,13 @@ const User = require('../models/User');
 const seedAdmin = async () => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@konjyosomtech.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || '<admin-password>';
+    let adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminPassword) {
+      // No password configured — generate a random one for first boot.
+      adminPassword = require('crypto').randomBytes(12).toString('base64url') + '!A1';
+      console.log('⚠️  ADMIN_PASSWORD not set — generated a random one-time admin password (check logs, change after login):', adminPassword);
+    }
 
     const existingAdmin = await User.findOne({ email: adminEmail });
 

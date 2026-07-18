@@ -72,6 +72,19 @@ function initNavbar() {
 }
 
 // ============================================
+// ACTIVE NAV LINK HIGHLIGHT
+// ============================================
+// Marks the nav link matching the current page as active,
+// so the indicator follows the page instead of staying on Home.
+function setActiveNavLink() {
+    const current = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        const href = link.getAttribute('href') || '';
+        link.classList.toggle('active', href === current);
+    });
+}
+
+// ============================================
 // ALERT SYSTEM
 // ============================================
 function showAlert(type, message, duration = 5000) {
@@ -395,6 +408,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navbar scroll effect
     initNavbar();
+
+    // Highlight current page in navbar
+    setActiveNavLink();
 
     // Mobile menu
     initMobileMenu();
